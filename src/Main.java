@@ -31,8 +31,8 @@ public class Main {
 
         boolean executando = true;
         System.out.println("╔═══════════════════════════════════════╗");
+        System.out.println("║   Desafio Integrador 3º Periodo       ║");
         System.out.println("║   Sistema de Gestão de Pedidos        ║");
-        System.out.println("║   Campo Real – Engenharia de Software ║");
         System.out.println("╚═══════════════════════════════════════╝");
 
         while (executando) {
