@@ -63,7 +63,7 @@ A `ProcessadorPedidos` é uma thread *daemon* que:
 - Usa `SELECT ... FOR UPDATE SKIP LOCKED` para garantir que dois processos nunca peguem o mesmo pedido
 - Fecha a conexão ao final de cada ciclo, completamente isolada do menu principal
 
-### Ausência de Setters (Object Calisthenics)
+### Ausência de Setters
 Todos os objetos de domínio (`Cliente`, `Produto`, `Pedido`, `ItemPedido`) são construídos via **construtores completos** ao serem lidos do banco. Nenhum `setter` é utilizado para popular objetos vindos do `ResultSet`.
 
 ### Transação e Estoque Seguro
