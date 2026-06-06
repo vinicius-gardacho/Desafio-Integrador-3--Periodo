@@ -55,7 +55,7 @@ java -cp "out;lib/mysql-connector-j-8.x.x.jar" src.Main
 ### Isolamento SQL do Console
 Nenhuma classe do pacote `src.ui` importa `java.sql`.
 O fluxo é: `MenuXxx → Service → Repository → JDBC`.
-Isso cumpre o requisito de separação de camadas (SRP do SOLID).
+Isso cumpre o requisito de separação de camadas.
 
 ### Thread e Gerenciamento de Conexões
 A `ProcessadorPedidos` é uma thread *daemon* que:
