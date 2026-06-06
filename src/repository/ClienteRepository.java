@@ -1,4 +1,4 @@
-package repository;
+ppackage repository;
 
 import exception.PersistenciaException;
 import model.Cliente;
@@ -69,9 +69,6 @@ public class ClienteRepository {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Mapeamento ResultSet → objeto (sem setters – Object Calisthenics)
-    // -------------------------------------------------------------------------
     private Cliente mapear(ResultSet rs) throws SQLException {
         return new Cliente(
             rs.getInt("id"),
