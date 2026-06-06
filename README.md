@@ -1,0 +1,112 @@
+# Sistema de Gestão de Pedidos — Desafio Integrador 3º Período
+
+**Centro Universitário Campo Real – Engenharia de Software – 2026**
+
+---
+
+## Pré-requisitos
+
+| Ferramenta | Versão mínima |
+|------------|--------------|
+| Java JDK   | 17           |
+| MySQL      | 8.0          |
+| mysql-connector-j | 8.x  |
+
+---
+
+## 1. Configurar o banco de dados
+
+```sql
+-- Execute o script DDL fornecido:
+mysql -u root -p < BANCO-DI.sql
+```
+
+---
+
+## 2. Configurar a conexão
+
+Edite o arquivo:
+
+```
+src/util/ConexaoBanco.java
+```
+
+Ajuste as constantes:
+
+```java
+private static final String URL      = "jdbc:mysql://localhost:3306/gestao_pedidos?...";
+private static final String USER     = "root";
+private static final String PASSWORD = "sua_senha";
+```
+
+---
+
+## 3. Compilar
+
+Coloque o `mysql-connector-j-8.x.x.jar` na pasta `lib/`.
+
+```bash
+# Na raiz do projeto
+mkdir -p out
+
+# Listar todos os .java
+find src -name * ".java" > sources.txt
+
+# Compilar
+javac -cp "lib/mysql-connector-j-x.x.x.jar" -d out @sources.txt
+```
+
+---
+
+## 4. Executar
+
+```bash
+java -cp "out:lib/mysql-connector-j-8.x.x.jar" Main
+# Windows:
+java -cp "out;lib/mysql-connector-j-8.x.x.jar" Main
+```
+
+---
+
+## Decisões Arquiteturais
+
+### Isolamento SQL do Console
+Nenhuma classe do pacote `com.gestao.ui` importa `java.sql`.
+O fluxo é: `MenuXxx → Service → Repository → JDBC`.
+Isso cumpre o requisito de separação de camadas (SRP do SOLID).
+
+### Thread e Gerenciamento de Conexões
+A `ProcessadorPedidos` é uma thread *daemon* que:
+- Abre **sua própria** `Connection` a cada ciclo de processamento
+- Usa `SELECT ... FOR UPDATE SKIP LOCKED` para garantir que dois processos nunca peguem o mesmo pedido
+- Fecha a conexão ao final de cada ciclo, completamente isolada do menu principal
+
+### Ausência de Setters (Object Calisthenics)
+Todos os objetos de domínio (`Cliente`, `Produto`, `Pedido`, `ItemPedido`) são construídos via **construtores completos** ao serem lidos do banco. Nenhum `setter` é utilizado para popular objetos vindos do `ResultSet`.
+
+### Transação e Estoque Seguro
+Ao criar um pedido:
+1. O estoque é decrementado via `UPDATE ... WHERE estoque >= quantidade` (condicional e atômico)
+2. Se qualquer item falhar, toda a transação é revertida com `rollback()`
+3. O pedido só é persistido se **todos** os itens tiverem estoque disponível
+
+---
+
+## Estrutura de Pacotes
+
+```
+DESAFIO-INTEGRADOR
+├── Main.java
+├── exception/          ← Exceções customizadas do domínio
+├── model/
+│   ├── enums/          ← Categoria, StatusPedido
+│   ├── Cliente.java
+│   ├── Produto.java
+│   ├── Pedido.java
+│   └── ItemPedido.java
+├── repository/         ← Acesso JDBC (único lugar com java.sql)
+├── service/            ← Regras de negócio e validações
+├── thread/             ← ProcessadorPedidos (thread assíncrona)
+├── ui/                 ← Menus de console (sem java.sql)
+└── util/               ← ConexaoBanco, Validador
+```
