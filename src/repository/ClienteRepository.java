@@ -1,4 +1,4 @@
-ppackage repository;
+package repository;
 
 import exception.PersistenciaException;
 import model.Cliente;
