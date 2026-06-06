@@ -6,44 +6,26 @@
 
 ## Pré-requisitos
 
-| Ferramenta | Versão mínima |
+| Ferramenta | Preferencialmente  |
 |------------|--------------|
-| Java JDK   | 17           |
-| MySQL      | 8.0          |
-| mysql-connector-j | 8.x  |
+| Java JDK   | TEMURIN JDK  |
+| MySQL      |  WORKBENCH   |
 
 ---
 
 ## 1. Configurar o banco de dados
 
-```sql
--- Execute o script DDL fornecido:
-mysql -u root -p < BANCO-DI.sql
-```
+Execute o script BANCO-DI fornecido pelo MySQL WorkBench.
 
 ---
 
 ## 2. Configurar a conexão
 
-Edite o arquivo:
-
-```
-src/util/ConexaoBanco.java
-```
-
-Ajuste as constantes:
-
-```java
-private static final String URL      = "jdbc:mysql://localhost:3306/gestao_pedidos?...";
-private static final String USER     = "root";
-private static final String PASSWORD = "sua_senha";
-```
+NÃO será necessario configurar a conexão, pois já foi deixado ela previamente configurada.
 
 ---
 
 ## 3. Compilar
-
-Coloque o `mysql-connector-j-8.x.x.jar` na pasta `lib/`.
 
 ```bash
 # Na raiz do projeto
@@ -71,7 +53,7 @@ java -cp "out;lib/mysql-connector-j-8.x.x.jar" src.Main
 ## Decisões Arquiteturais
 
 ### Isolamento SQL do Console
-Nenhuma classe do pacote `com.gestao.ui` importa `java.sql`.
+Nenhuma classe do pacote `src.ui` importa `java.sql`.
 O fluxo é: `MenuXxx → Service → Repository → JDBC`.
 Isso cumpre o requisito de separação de camadas (SRP do SOLID).
 
